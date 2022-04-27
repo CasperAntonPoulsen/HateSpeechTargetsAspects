@@ -56,6 +56,6 @@ def list_reference_concepts(infolder, out_topfolder, path_to_data, path_to_dev_i
 if __name__ == "__main__":
     list_reference_concepts(infolder="processed_data/concepts_extracted_with_next_tag_next_word",
                             out_topfolder="processed_data/reference_concepts_followed_by_verb_not_aux",
-                            path_to_data="data/all_data_waseem.csv",
+                            path_to_data="data/all_data_waseem_da.csv",
                             path_to_dev_ids="data/post_ids_dev.json",
                             path_to_test_ids="data/post_ids_test.json")

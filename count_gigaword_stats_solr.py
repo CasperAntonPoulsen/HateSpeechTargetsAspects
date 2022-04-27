@@ -3,9 +3,27 @@ import pandas as pd
 import requests
 import pickle
 import math
+import json
 
+
+class DaTwitterDocFreq:
+    def __init__(self, docFreqPath):
+        self.docFreqPath = docFreqPath
+        self.gigaDoc = None
+
+    def loadDoc(self):
+        self.gigaDoc = json.load(self.docFreqPath)
+
+    def getDocFreq(self, token):
+        if self.gigaDoc is None:
+            self.loadDoc
+        
+        return self.gigaDoc[token]
 
 def count_tf_idf(in_topfolder, out_topfolder):
+
+    gigawordDocFreq = DaTwitterDocFreq("twitterDanishCorpusDocFreq.json")
+
     if not os.path.exists(out_topfolder):
         os.makedirs(out_topfolder)
 
@@ -17,7 +35,7 @@ def count_tf_idf(in_topfolder, out_topfolder):
         conc_df_files = os.listdir(conc_folderin)
         cocn_doc_num_dict = {}
         dictpickle = os.path.join("processed_data", "hate_speech_pos_stats_solr_dict.pickle")
-        Ndoc = 161105350
+        Ndoc = 1279600
         if os.path.exists(dictpickle):
             cocn_doc_num_dict = pickle.load(open(dictpickle, "rb"))
         for conc_df_file in conc_df_files:
@@ -35,11 +53,16 @@ def count_tf_idf(in_topfolder, out_topfolder):
                     pickle.dump(dict(cocn_doc_num_dict), open(dictpickle, "wb"))
                 if conc in cocn_doc_num_dict:
                     continue
-                res = requests.get(
-                    "http://clasificador-taln.upf.edu/index/english_giga/select?q=text:\"%20" +
-                    conc.replace(" ", "%20").replace("%", "%25") + "%20\"").json()
-                if "response" in res and "numFound" in res["response"]:
-                    cocn_doc_num_dict[conc] = res["response"]["numFound"]
+
+                #res = requests.get(
+                #    "http://clasificador-taln.upf.edu/index/english_giga/select?q=text:\"%20" +
+                #    conc.replace(" ", "%20").replace("%", "%25") + "%20\"").json()
+                #if "response" in res and "numFound" in res["response"]:
+                #    cocn_doc_num_dict[conc] = res["response"]["numFound"]
+
+                gigawordDocFreq.getDocFreq(conc)
+
+
             df["DF"] = df["concept"].apply(lambda x: cocn_doc_num_dict[x] if x in cocn_doc_num_dict else 0)
             df["TF-IDF"] = df.apply(
                 lambda x: 1.0 * math.log(1.0 + x["tf_collection"]) * (math.log(1.0 * Ndoc / (1.0 + x["DF"])) + 1),
