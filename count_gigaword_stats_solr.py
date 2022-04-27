@@ -60,7 +60,7 @@ def count_tf_idf(in_topfolder, out_topfolder):
                 #if "response" in res and "numFound" in res["response"]:
                 #    cocn_doc_num_dict[conc] = res["response"]["numFound"]
 
-                gigawordDocFreq.getDocFreq(conc)
+                cocn_doc_num_dict[conc] = gigawordDocFreq.getDocFreq(conc)
 
 
             df["DF"] = df["concept"].apply(lambda x: cocn_doc_num_dict[x] if x in cocn_doc_num_dict else 0)
