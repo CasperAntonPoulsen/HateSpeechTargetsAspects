@@ -21,7 +21,6 @@ parser = ParserWithUsage()
 parser.description = "Displays translated text entry with their english annotations"
 parser.add_argument("--data_set", help="Which dataset to be displayed, dev or test", required=True, type=str)
 
-
 args = parser.parse_args()
 
 data_set = args.data_set
